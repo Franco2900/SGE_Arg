@@ -1,6 +1,0 @@
-Puppeteer tiene un tiempo limite de 30 segundos para hacer la conexión con el sitio web o salta un TimeoutError.
-Hay que aumentar el tiempo limite de puppeteer para que espere por más tiempo (hasta 60 al menos) ya que algunos sitios web son lentos
-
-Hay que hacer una lista con los campos que sacamos de cada sitio web
-
-Hay que ver como ponemos dichos campos en el archivo excel

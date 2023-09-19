@@ -1,4 +1,4 @@
-function extraerInfoDOAJ(XMLHttpRequest, fs, paginaActual = 1, info = "Titulo; E-ISSN;P-ISSN;Institución;Editora;\n")
+function extraerInfoDOAJ(XMLHttpRequest, fs, paginaActual = 1, revista = 1, info = "Titulo;E-ISSN;P-ISSN;Institución;Editora\n")
 {    
     const API_URL = "https://doaj.org/api/"; // URL a la que vamos a pedir los datos
 
@@ -13,15 +13,18 @@ function extraerInfoDOAJ(XMLHttpRequest, fs, paginaActual = 1, info = "Titulo; E
         // El atributo readyState es el estado de un objeto de la clase XMLHttpRequest, y el atributo status define el estado de una solicitud al servidor
         if (this.readyState == 4 && this.status == 200) // cuando esta condición se cumple, significa que la respuesta del servidor ya se recibió y que no hubo problemas
         { 
-            console.log("Comienza la extracción de datos de DOAJ");
-
             // response es la respuesta del servidor
             const respuestaJSON = JSON.parse(this.response); // Las APIs se suelen comunicar en JSON, así que parseo la respuesta a JSON
         
             // Ya que cada consulta solo puede devolver una página con un máximo de 100 revistas, me fijo cuantas páginas me falta consultar
             var cantidadPaginas = Math.ceil(respuestaJSON.total/respuestaJSON.pageSize);
-            var limite = respuestaJSON.pageSize;
-            if(paginaActual == cantidadPaginas) limite = respuestaJSON.total - (respuestaJSON.pageSize * (--cantidadPaginas));
+            var limite          = respuestaJSON.pageSize;
+            if(paginaActual == cantidadPaginas) 
+            {
+                auxCantidadPaginas = cantidadPaginas
+                limite = respuestaJSON.total - (respuestaJSON.pageSize * (--auxCantidadPaginas));
+            }
+            console.log(`Comienza la extracción de datos de la página ${paginaActual} de ${cantidadPaginas}`);
 
             // Filtro la info recibida por la API
             console.log(`PÁGINA: ${paginaActual}`);
@@ -48,8 +51,10 @@ function extraerInfoDOAJ(XMLHttpRequest, fs, paginaActual = 1, info = "Titulo; E
                 else if(typeof(respuestaJSON.results[i].bibjson.publisher.name) == "undefined") editora = null;
                 else                                                                            editora = respuestaJSON.results[i].bibjson.publisher.name.trim().replaceAll(";", ",");
 
-                info += `${titulo};${eissn};${pissn};${nombreInstituto};${editora};\n`;
+                info += `${titulo};${eissn};${pissn};${nombreInstituto};${editora}\n`;
 
+                console.log(`***********************************************************************************`);
+                console.log(`Revista: ${revista}`)
                 console.log(`***********************************************************************************`);
                 console.log(`Titulo ${i}: ${titulo}`);
                 console.log(`E-ISSN: ${eissn}`);
@@ -57,13 +62,23 @@ function extraerInfoDOAJ(XMLHttpRequest, fs, paginaActual = 1, info = "Titulo; E
                 console.log(`Institucion: ${nombreInstituto}`);
                 console.log(`Editora: ${editora}`);
                 console.log(`***********************************************************************************`);
+
+                revista++;
             }
 
+            console.log(`Termina la extracción de datos de la página ${paginaActual} de ${cantidadPaginas}`);
+
             // Si no termine de consultar todas las páginas, vuelvo a hacer la consulta pero en la página siguiente y con la info que ya obtuvimos
-            if(paginaActual != ++cantidadPaginas) extraerInfoDOAJ(XMLHttpRequest, fs, ++paginaActual, info); 
+            if(paginaActual != cantidadPaginas) extraerInfoDOAJ(XMLHttpRequest, fs, ++paginaActual, revista, info); 
 
             // Escribo la info en el archivo .xls
             fs.writeFile('./Revistas/DOAJ.xls', info, error => 
+            { 
+                if(error) console.log(error);
+            })
+
+            // También en un archivo .csv
+            fs.writeFile('./Revistas/DOAJ.csv', info, error => 
             { 
                 if(error) console.log(error);
             })
@@ -73,8 +88,6 @@ function extraerInfoDOAJ(XMLHttpRequest, fs, paginaActual = 1, info = "Titulo; E
             { 
                 if(error) console.log(error);
             })*/
-
-            console.log("Termina la extracción de datos de DOAJ");
         }
     };
 }

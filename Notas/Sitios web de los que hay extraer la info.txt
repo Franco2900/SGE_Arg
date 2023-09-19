@@ -1,5 +1,6 @@
 Necesitamos solo las revistas científicas argentinas de los siguientes sitios web
 
+FRANCO
 Latindex Catálogo 2.0  
 (448 revistas científicas argentinas)
 https://www.latindex.org/latindex/bAvanzada/resultado?idMod=1&tema=0&subtema=0&region=0&pais=3&critCat=0&send=Buscar
@@ -8,13 +9,14 @@ DOAJ Directory of Open Access Journals
 (375 revistas científicas argentinas)
 https://doaj.org/
 
-BIBLAT https://biblat.unam.mx/es/sobre-biblat
-
-DIALNET https://dialnet.unirioja.es/
-
 Redalyc https://www.redalyc.org/
 
 NBRCA http://www.caicyt-conicet.gov.ar/sitio/comunicacion-cientifica/nucleo-basico/revistas-integrantes/
+
+LEANDRO
+BIBLAT https://biblat.unam.mx/es/sobre-biblat
+
+DIALNET https://dialnet.unirioja.es/
 
 SciELO Argentina (solo las vigentes) http://www.scielo.org.ar/scielo.php
 

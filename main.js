@@ -1,79 +1,51 @@
-// Módulos del núcleo de Node.JS o módulos externos
-const http = require('http');           // Módulo para la navegación web
-const fs   = require('fs');             // Módulo para leer y escribir archivos
-const puppeteer = require('puppeteer'); // Módulo para web scrapping
-const jsdom     = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
-const XMLHttpRequest = require('xhr2'); // Módulo para comunicarse con las APIs
+const http         = require('http');             // Módulo para hacer la navegación web
+const enrutamiento = require('./enrutamiento.js') // Módulo para enrutar las solicitudes
 
-// Módulos hechos por nosotros
-const Latindex = require('./modulos webScrapping/Latindex webScrapping.js');
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
+// EXPLICACIÓN DE COMO FUNCIONA HTTP
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
+// HTTP (HyperText Transfer Protocol / Protocolo de transferencia de hipertexto) es un protocolo que permite la transferencia de datos entre un servidor web y normalmente un navegador.
+// Cuando escribimos una dirección web, o mejor dicho, una URL (Uniform Resource Locators / Localizador de recursos uniforme) estas tienen la forma de:
 
-// APIs
-const DOAJ     = require('./APIs/DOAJ API.js');
+// http://host[:puerto][/ruta y archivo][?parámetros]
 
-// Ejecución del programa
-//Latindex.extraerInfoLatindex(puppeteer, jsdom, fs);
-DOAJ.extraerInfoDOAJ(XMLHttpRequest, fs);
+// http              (es el protocolo que utilizamos para conectarnos con un servidor web)
+// host              (es el nombre del dominio, por ejemplo: google.com.ar)
+// puerto            (es un número que generalmente no lo disponemos, ya que por defecto el protocolo http utiliza el nro 80, salvo que nuestro servidor escuche peticiones en otro puerto, que ya en este caso si debemos indicarlo)
+// [/ruta y archivo] (indica donde se encuentra el archivo en el servidor y cual es el archivo)
+// ?parámetros       (datos que se pueden enviar desde el cliente para una mayor identificación del recurso que solicitamos)
+
+// Ejemplo:            https://www.tutorialesprogramacionya.com/javascriptya/nodejsya/detalleconcepto.php?punto=5&codigo=5&inicio=0
+// El host es:         www.tutorialesprogramacionya.com
+// El puerto es:       80
+// La ruta es:         javascriptya/nodejsya/
+// El archivo es:      detalleconcepto.php
+// Los párametros son: punto=5, codigo=5, inicio=0
+
+// Cuando ingresamos una URL, el navegador hace una solicitud al servidor y el servidor responde a dicha solicitud
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx//
 
 
-/* TODO ESTO ANDA. ES PARA IMPLEMENTAR UNA VISTA WEB EN EL FUTURO
-// Defino los MIME Types (estos son los tipos de archivo que soporta el código)
-const mime = 
-{ 
-  'html': 'text/html',
-  'css': 'text/css',
-  'jpg': 'image/jpg',
-  'ico': 'image/x-icon',
-  'mp3': 'audio/mpeg3',
-  'mp4': 'video/mp4',
-  'xls': 'application/xml'
-}
-
+// Cuando trabajamos con Node.js debemos codificar nosotros el servidor web (muy distinto a como se trabaja con PHP en donde disponemos en forma paralela un servidor web como puede ser el Apache)
 // Configuración del servidor de Node.js
-const servidor = http.createServer((pedido, respuesta) => {
+const servidor = http.createServer((pedido, respuesta) => 
+{
+  // createServer() crea un servidor con el protocolo HTTP y su párametro es una función que se dispara cada vez que le llega una solicitud del navegador
+  // pedido tiene varios datos, entre ellos: el nombre del archivo que solicitamos, la URL, la información del navegador que hizo la petición, etc.
+  // respuesta es la respuesta del servidor al navegador
+
+  const url  = new URL('http://localhost:8888' + pedido.url); // Creo una URL para obtener la ruta facilmente
+  let ruta   = 'static' + url.pathname;                       // A la carpeta que contiene todos los archivos HTML le concatenao la ruta y el nombre del archivo HTML solicitado
   
-  const url = new URL('http://localhost:8888' + pedido.url) // Creo una URL para el servidor
-  let camino = 'static' + url.pathname                      // Al nombre de la subcarpeta que contiene los archivos HTML le concatenao el path y el nombre del archivo HTML solicitado
-  
-  if (camino == 'static/') camino = 'static/index.html' // El primer control que hacemos es verificar si en la url no viene ninguna página, en dicho caso redirigimos el path al archivo index.html (el html principal del sitio)
-  
-  // Verifico la existencia del archivo html al que se quiere acceder
-  fs.stat(camino, error => {
-
-    if (!error) { // Si existe el archivo
-
-      fs.readFile(camino, (error, contenido) => {
-
-        if (error) { // Si hubo un error al leer el archivo
-          respuesta.writeHead(500, { 'Content-Type': 'text/plain' })
-          respuesta.write('Error interno')
-          respuesta.end()
-        } 
-        else { // Si no hubo un error al leer el archivo
-            const vector      = camino.split('.');
-            const extension   = vector[vector.length - 1]; 
-            const mimearchivo = mime[extension];            
-            respuesta.writeHead(200, { 'Content-Type': mimearchivo });
-            respuesta.write(contenido);
-               
-            extraerInfoLatindex();
-
-            respuesta.end();
-        }
-        
-      })
-
-    } 
-    else { // Si no existe el archivo
-      respuesta.writeHead(404, { 'Content-Type': 'text/html' });
-      respuesta.write('<!doctype html><html><head></head><body>Recurso inexistente</body></html>');
-      respuesta.end();
-    }
-
-  })
-
+  if (ruta == 'static/') ruta = 'static/index.html';          // Si en la URL no viene indicada ninguna ruta, redirigimos la ruta al archivo index.html
+  enrutamiento.enrutar(pedido, respuesta, ruta)               // Si hay una ruta, redigirimos a donde corresponde
 })
 
-servidor.listen(8888); // Dirección de puerto en el que el servidor se va a quedar escuchando peticiones
-console.log('Servidor web iniciado en el puerto 8888'); 
-*/
+servidor.listen(8888);                                   // Puerto en el que el servidor se va a quedar escuchando peticiones (puede ser cualquiera mientras no sea 80)
+console.log('Servidor web iniciado en el puerto 8888');  // Cuando lo ejecutamos en la consola se muestra el mensaje y no se cierra. Esto es porque el programa se queda escuchando peticiones en el puerto indicado
+// Para ver como funciona el sitio web, en el navegador hay que escribir localhost:8888
+
+
+// NOTA PARA LOS QUE SIGAN CON ESTE PROYECTO
+// En caso de que no sepan como usar Node.js, les dejamos la guía que usamos para aprender a usarlo
+// https://www.tutorialesprogramacionya.com/javascriptya/nodejsya/
