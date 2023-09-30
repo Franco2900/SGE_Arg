@@ -7,6 +7,7 @@ const XMLHttpRequest = require('xhr2');      // Módulo para comunicarse con las
 // Módulos de webscrapping (hechos por nosotros)
 const Latindex = require('./modulos webScrapping/Latindex webScrapping.js');
 const CAICYT   = require('./modulos webScrapping/CAICYT websScrapping.js');
+const Biblat   = require('./modulos webScrapping/Biblat_webScrapping.js');
 
 // APIs (los brindan los sitios web)
 const DOAJ     = require('./APIs/DOAJ API.js');
@@ -15,3 +16,5 @@ const DOAJ     = require('./APIs/DOAJ API.js');
 //Latindex.extraerInfoLatindex(puppeteer, jsdom, fs);
 //DOAJ.extraerInfoDOAJ(XMLHttpRequest, fs);
 //CAICYT.extraerInfoCAICYT(puppeteer, jsdom, fs);
+//Biblat.extraerInfoBiblat(puppeteer, jsdom, fs);
+Biblat.extraerInfoBiblat();
