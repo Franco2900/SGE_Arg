@@ -1,25 +1,34 @@
-const fs    = require('fs')
-const mime  = require('mime')
+const fs    = require('fs');
+const mime  = require('mime');
 
-const rutasDOAJ = require('./Rutas/rutasDOAJ.js')
+const rutasDOAJ     = require('./Rutas/rutasDOAJ.js');
+const rutasCAICYT   = require('./Rutas/rutasCAICYT.js');
+const rutasLatindex = require('./Rutas/rutasLatindex.js');
 
 function enrutar(pedido, respuesta, ruta) 
 {
-    switch (ruta)
+    switch (ruta) // Con este switch se controla que archivos o funciones llama cada ruta. Con los case llamo a funciones y con el default llamo a archivos
     {
-        /*case "static/subirFoto": 
+        
+        case "static/consultaDOAJ":
         {
-            rutas.subirFoto(pedido, respuesta)
+            rutasDOAJ.consultaDOAJ(respuesta);
             break;
         }
 
-        case "static/mostrarFotos":
+        case "static/consultaCAICYT":
         {
-            rutas.mostrarFotos(respuesta)
+            rutasCAICYT.consultaCAICYT(respuesta);
             break;
-        }*/
+        }
 
-        default:
+        case "static/consultaLatindex":
+        {
+            rutasLatindex.consultaLatindex(respuesta);
+            break;
+        }
+
+        default: // En caso de que la ruta no llame a una función, sino a un archivo
         {  
             // Mediante el módulo fs verificamos si existe el archivo HTML. 
             // El método stat tiene como primer parámetro el nombre del archivo junto con toda la ruta y el segundo parámetro es una función anónima que actua distinto dependiendo si hubo o no un error con el archivo
