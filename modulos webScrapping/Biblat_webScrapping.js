@@ -1,5 +1,9 @@
+const fs             = require('fs');        // Módulo para leer y escribir archivos
+const puppeteer      = require('puppeteer'); // Módulo para web scrapping
+const jsdom          = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
+
 // Busco cuantas páginas devuelve la consulta a Latindex (cada página tiene entre 1 y 20 revistas)
-async function obtenerPaths(puppeteer) {
+async function obtenerPaths() {
   try {
     const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
@@ -9,12 +13,23 @@ async function obtenerPaths(puppeteer) {
 
     // Espero a que el selector esté presente en la página
     await page.waitForSelector('path.highcharts-point.highcharts-name-argentina.highcharts-key-ar');
+    await page.waitForTimeout(2000);
+    // Comprobar si el selector está presente
+    const selectorExists = await page.evaluate(() => {
+      return !!document.querySelector('path.highcharts-point.highcharts-name-argentina.highcharts-key-ar');
+    });
+
+    if (!selectorExists) {
+      console.log('El selector no está presente en la página.');
+      return [];
+    }
 
     await page.click(
       'path.highcharts-point.highcharts-name-argentina.highcharts-key-ar'
     );
-
-    await page.waitForTimeout(2000);
+    // Espero a que el selector esté presente en la página
+    await page.waitForSelector('div.dataTables_scrollBody');
+    await page.waitForTimeout(3000);
 
     const hrefs = await page.evaluate(() => {
       const hrefArray = [];
@@ -30,8 +45,7 @@ async function obtenerPaths(puppeteer) {
 
       return hrefArray;
     });
-    console.log('HREFs cantidad:', hrefs.length);
-    console.log('HREFs encontrados:', hrefs);
+    //console.log('PATHs cantidad obtenidos:', hrefs.length);
 
     await browser.close();
 
@@ -44,9 +58,9 @@ async function obtenerPaths(puppeteer) {
 
 
 // Busco los enlaces de cada revista que devuelva la consulta a Latindex
-async function buscarEnlacesARevistas(puppeteer) {
+async function buscarEnlacesARevistas(paths) {
   try {
-    const paths = await obtenerPaths(puppeteer);
+    //const paths = await obtenerPaths();
     const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(5000); // Establece un tiempo de espera predeterminado
@@ -73,7 +87,7 @@ async function buscarEnlacesARevistas(puppeteer) {
       }
     }
 
-    console.log('Cantidad de ENLACES:', enlaces.length);
+    //console.log('ENLACES Cantidad obtenida:', enlaces.length);
     await browser.close();
     return enlaces;
   } catch (error) {
@@ -81,109 +95,75 @@ async function buscarEnlacesARevistas(puppeteer) {
     throw error;
   }
 }
-
-
 // Extraigo la info de una revista
-async function extraerInfoRevista(puppeteer, jsdom, enlace) {
-  try {
-    const browser = await puppeteer.launch({ headless: "new" });
+async function extraerInfoRevista(enlaces) {
+  const browser = await puppeteer.launch({ headless: "new" });
+  const registros = [];
 
+  for (const enlace of enlaces) {
     const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(0);
-    const response = await page.goto(enlace);
-    const body = await response.text();
 
-    const {
-      window: { document },
-    } = new jsdom.JSDOM(body);
+    try {
+      console.log(`Procesando enlace: ${enlace}`);
 
-    var filtroHTML = document.getElementById("rev-linea");
-    var filtro2HTML = filtroHTML.getElementsByClassName(
-      "table-resultadosFicha"
-    )[0];
-    const tabla1 = filtro2HTML.querySelectorAll("tbody tr td");
-    const titulo = tabla1[0].textContent;
-    const issn = tabla1[tabla1.length - 1].textContent;
-
-    filtroHTML = document.getElementById("datos-comunes");
-    const tabla2 = filtroHTML.querySelectorAll("div table tbody tr td");
-    const tabla3 = filtroHTML.querySelectorAll("div table tbody tr th");
-
-    var moverPosicion = 0;
-    var organismoResponsable = null;
-    if (tabla3[3].textContent == "Organismo responsable:") {
-      // No todas las revistas tienen esta variable
-      moverPosicion = 1;
-      organismoResponsable = tabla2[3].textContent.trim().replaceAll(";", ",");
+      const response = await page.goto(enlace); 
+      const body     = await response.text();   
+            
+    const { window: { document } } = new jsdom.JSDOM(body); 
+        
+    //var filtroHTML  = document.getElementById("rev-linea");
+    var filtro2HTML = document.getElementsByClassName("table table-striped ")[0];
+    const tabla1    = filtro2HTML.querySelectorAll("tbody tr td");
+   var revista    = null;
+   var issn      = null;
+   var pais      = null;
+   for ( i =0; i<tabla1.length;i++){
+    //console.log("CONTENIDO: "+tabla1[i].textContent)
+     if (tabla1[i].textContent === "Revista:") revista = tabla1[i+1].textContent ;
+     if (tabla1[i].textContent === "ISSN:") issn = tabla1[i+1].textContent ;
+     if (tabla1[i].textContent === "País:") pais = tabla1[i+1].textContent ;
     }
-
-    const idioma = tabla2[0].textContent.trim().replaceAll(";", ",");
-    const tema = tabla2[1].textContent.trim().replaceAll(";", ",");
-    const subtemas = tabla2[2].textContent.trim().replaceAll(";", ",");
-    const editorial = tabla2[3 + moverPosicion].textContent
-      .trim()
-      .replaceAll(";", ",");
-    const ciudad = tabla2[4 + moverPosicion].textContent
-      .trim()
-      .replaceAll(";", ",");
-    const provincia = tabla2[5 + moverPosicion].textContent
-      .trim()
-      .replaceAll(";", ","); // En Latindex se llama Estado/Provincia/Departamento pero para hacerlo corto lo llamo directamente provincia
-    const correo = tabla2[6 + moverPosicion].textContent
-      .trim()
-      .replaceAll(";", ",");
-
-    await browser.close();
-
-    console.log(
-      `***********************************************************************************`
-    );
-    console.log(`Título: ${titulo}`);
-    console.log(`ISSN: ${issn}`);
-    console.log(`Idioma: ${idioma}`);
-    console.log(`Tema: ${tema}`);
-    console.log(`Subtemas: ${subtemas}`);
-    console.log(`Organismo responsable: ${organismoResponsable}`);
-    console.log(`Editorial: ${editorial}`);
-    console.log(`Ciudad: ${ciudad}`);
-    console.log(`Estado/Provincia/Departamento: ${provincia}`);
-    console.log(`Correo: ${correo}`);
-    console.log(
-      `***********************************************************************************`
-    );
-
-    return (
-      `${titulo};${issn};${idioma};${tema};${subtemas};${organismoResponsable};${editorial};${ciudad};${provincia};${correo};` +
-      `\n`
-    );
-  } catch (error) {
-    console.error(error);
+    
+      //console.log("REGISTROS: "+revista+" "+issn);
+      registros.push({ revista, issn , pais});
+    } catch (error) {
+      console.error(`Error al procesar enlace: ${enlace}`);
+      console.error(error);
+      // Continúa con el siguiente path si hay un error de tiempo de espera
+      continue;
+    } finally {
+      await page.close();
+    }
   }
+
+  await browser.close();
+  return registros;
 }
 
 // Extraigo la info de todas las revistas de la consulta
-async function extraerInfoBiblat(puppeteer, jsdom, fs) {
-  console.log("Comienza la extracción de datos de Latindex");
+async function extraerInfoBiblat() {
+  console.log("Comienza la extracción de datos de Biblat");
+  const paths = await obtenerPaths();
+  const enlaces = await buscarEnlacesARevistas(paths);
+  //const enlaces = ['https://biblat.unam.mx/es/revista/salud-colectiva/articulo/concentracion'];
+  const registros = await extraerInfoRevista(enlaces);
 
-  const enlaces = await buscarEnlacesARevistas(puppeteer, jsdom);
-  var info =
-    "Título;ISSN;Idioma;Tema;Subtemas;Organismo responsable;Editorial;Ciudad;Estado/Provincia/Departamento;Correo;" +
-    "\n";
+  console.log("CANTIDAD DE REVISTAS: " + paths.length);
+  console.log("REVISTAS CONSULTADAS: " + enlaces.length);
+  console.log("REGISTROS OBTENIDOS: " + registros.length);
 
-  console.log("CANTIDAD DE REVISTAS: " + enlaces.length);
+  // Crear archivo JSON
+  const jsonFilePath = './Revistas/Biblat.json';
+  fs.writeFileSync(jsonFilePath, JSON.stringify(registros, null, 3));
+  console.log(`Archivo JSON creado: ${jsonFilePath}`);
 
-  var i;
-  for (i = 0; i < enlaces.length - 1; i++) {
-    console.log(`REVISTA ${i}`);
-    info += await extraerInfoRevista(puppeteer, jsdom, enlaces[i]);
-  }
+  // Crear archivo CSV
+  const csvData = registros.map(registro => `${registro.revista};${registro.issn};${registro.pais}`).join('\n');
+  const csvFilePath = './Revistas/Biblat.csv';
+  fs.writeFileSync(csvFilePath, `Título;ISSN;Pais\n${csvData}`);
+  console.log(`Archivo CSV creado: ${csvFilePath}`);
 
-  // Escribimos la info de cada revista en el archivo excel. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-  fs.writeFile("./Revistas/Latindex.xls", info, (error) => {
-    if (error) console.log(error);
-  });
-
-  console.log("Termina la extracción de datos de Latindex");
+  console.log("Termina la extracción de datos de Biblat");
 }
 
-exports.buscarEnlacesARevistas = buscarEnlacesARevistas;
+exports.extraerInfoBiblat = extraerInfoBiblat;
