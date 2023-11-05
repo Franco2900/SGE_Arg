@@ -221,7 +221,7 @@ async function extraerInfoCAICYT()
     info += await extraerInfoRevista(enlaces[i]);
   }
 
-  // Escribo la info en formato csv. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
+  // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
   fs.writeFile('./Revistas/CAICYT.csv', info, error => 
   { 
     if(error) console.log(error);

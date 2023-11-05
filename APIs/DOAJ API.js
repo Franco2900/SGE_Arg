@@ -1,4 +1,8 @@
-function extraerInfoDOAJ(XMLHttpRequest, fs, csv, paginaActual = 1, revista = 1, info = "Titulo;E-ISSN;P-ISSN;Institución;Editora\n")
+const fs             = require('fs');        // Módulo para leer y escribir archivos
+const XMLHttpRequest = require('xhr2');      // Módulo para comunicarse con las APIs
+const csvtojson      = require('csvtojson')  // Módulo para pasar texto csv a json
+
+function extraerInfoDOAJ(paginaActual = 1, revista = 1, info = "Título;ISSN impresa;ISSN en linea;Institución;Editora\n")
 {    
     const API_URL = "https://doaj.org/api/"; // URL a la que vamos a pedir los datos
 
@@ -34,9 +38,9 @@ function extraerInfoDOAJ(XMLHttpRequest, fs, csv, paginaActual = 1, revista = 1,
             revista += limite
 
             // Si no termine de consultar todas las páginas, vuelvo a hacer la consulta pero en la página siguiente y con la info que ya obtuvimos
-            if(paginaActual != cantidadPaginas) extraerInfoDOAJ(XMLHttpRequest, fs, csv, ++paginaActual, revista, info);
+            if(paginaActual != cantidadPaginas) extraerInfoDOAJ(++paginaActual, revista, info);
             
-            escribirInfo(info, fs, csv);
+            escribirInfo(info);
         }
     };
 }
@@ -50,11 +54,11 @@ function filtro(info, limite, revista, respuestaJSON)
         var titulo = respuestaJSON.results[i].bibjson.title.trim().replaceAll(";", ",");
 
         // No todas las revistas tienen todos los datos, así que tengo que verificar si tienen ciertos datos o no
-        var eissn;
+        var eissn; // E-ISSN significa ISSN en linea
         if(typeof(respuestaJSON.results[i].bibjson.eissn) == "undefined") eissn = null;
         else                                                              eissn = respuestaJSON.results[i].bibjson.eissn.trim().replaceAll(";", ",");
 
-        var pissn;
+        var pissn; // P-ISSN significa ISSN impresa
         if(typeof(respuestaJSON.results[i].bibjson.pissn) == "undefined") pissn = null;
         else                                                              pissn = respuestaJSON.results[i].bibjson.pissn.trim().replaceAll(";", ",");
 
@@ -68,15 +72,15 @@ function filtro(info, limite, revista, respuestaJSON)
         else if(typeof(respuestaJSON.results[i].bibjson.publisher.name) == "undefined") editora = null;
         else                                                                            editora = respuestaJSON.results[i].bibjson.publisher.name.trim().replaceAll(";", ",");
 
-        info += `${titulo};${eissn};${pissn};${nombreInstituto};${editora}\n`;
+        info += `${titulo};${pissn};${eissn};${nombreInstituto};${editora}\n`;
 
         // Muestro en consola la info de la revista
         console.log(`***********************************************************************************`);
         console.log(`Revista: ${revista}`)
         console.log(`***********************************************************************************`);
         console.log(`Titulo: ${titulo}`);
-        console.log(`E-ISSN: ${eissn}`);
-        console.log(`P-ISSN: ${pissn}`);
+        console.log(`ISSN impresa: ${pissn}`);
+        console.log(`ISSN en linea: ${eissn}`);
         console.log(`Institucion: ${nombreInstituto}`);
         console.log(`Editora: ${editora}`);
         console.log(`***********************************************************************************`);
@@ -88,7 +92,7 @@ function filtro(info, limite, revista, respuestaJSON)
 }
 
 
-function escribirInfo(info, fs, csv)
+function escribirInfo(info)
 {
     // Escribo la info en el archivo .csv
     fs.writeFile('./Revistas/DOAJ.csv', info, error => 
@@ -98,7 +102,7 @@ function escribirInfo(info, fs, csv)
 
 
     // Parseo de CSV a JSON
-    csv({delimiter: [";"],}).fromFile('./Revistas/DOAJ.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
+    csvtojson({delimiter: [";"],}).fromFile('./Revistas/DOAJ.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
     { 
         fs.writeFile('./Revistas/DOAJ.json', JSON.stringify(json), error => 
         { 
