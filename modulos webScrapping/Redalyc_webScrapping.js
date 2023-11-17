@@ -7,12 +7,12 @@ const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 // Busco los enlaces de todas las revistas
 async function extraerInfoRedalyc()
 {
+    const browser  = await puppeteer.launch({headless: 'new'}); // Inicio puppeter
+   
     try
     {
-        const browser  = await puppeteer.launch({headless: 'false'}); // Inicio puppeter
-
         const page     = await browser.newPage();
-        page.setDefaultNavigationTimeout(0);                     // Indico el tiempo limite para conectarse a un sitio web en milisegundos. Con cero quita el límite de tiempo (no es recomendable poner en 0 porque puede quedar en un bucle infinito en caso de error)
+        page.setDefaultNavigationTimeout(120000);                     // Indico el tiempo limite para conectarse a un sitio web en milisegundos. Con cero quita el límite de tiempo (no es recomendable poner en 0 porque puede quedar en un bucle infinito en caso de error)
         await page.goto(`https://www.redalyc.org/pais.oa?id=9`); // URL del sitio web al que se le hace web scrapping
         await page.waitForSelector(".wrapper");                  // Espera a que el elemento indicado se cargue en el sitio web
         var html = await page.content();                         // Guardo el HTML extraido en esta variable  
@@ -75,7 +75,6 @@ async function extraerInfoRedalyc()
  
         }
 
-        await browser.close(); // cierro puppeter
 
         // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
         fs.writeFile('./Revistas/Redalyc.csv', info, error => 
@@ -83,14 +82,19 @@ async function extraerInfoRedalyc()
             if(error) console.log(error);
         })
 
-        // Parseo de CSV a JSON
-        csvtojson({delimiter: [";"],}).fromFile('./Revistas/Redalyc.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
-        { 
-            fs.writeFile('./Revistas/Redalyc.json', JSON.stringify(json), error => 
+
+        setTimeout(function () { // Le indico al programa que espere 5 segundos antes de seguir porque tarda en crearse el archivo .csv
+
+            // Parseo de CSV a JSON
+            csvtojson({delimiter: [";"],}).fromFile('./Revistas/Redalyc.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
             { 
-                if(error) console.log(error);
+                fs.writeFile('./Revistas/Redalyc.json', JSON.stringify(json), error => 
+                { 
+                    if(error) console.log(error);
+                })
             })
-        })
+
+        }, 5000);
     }
     catch(error)
     {
@@ -99,6 +103,8 @@ async function extraerInfoRedalyc()
         console.error(error);
         console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     }
+
+    await browser.close(); // cierro puppeter
 }
 
 exports.extraerInfoRedalyc = extraerInfoRedalyc;

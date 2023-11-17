@@ -43,6 +43,7 @@ function extraerInfoDOAJ(paginaActual = 1, revista = 1, info = "Título;ISSN imp
             escribirInfo(info);
         }
     };
+    
 }
 
 
@@ -101,21 +102,25 @@ function escribirInfo(info)
     })
 
 
-    // Parseo de CSV a JSON
-    csvtojson({delimiter: [";"],}).fromFile('./Revistas/DOAJ.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
-    { 
-        fs.writeFile('./Revistas/DOAJ.json', JSON.stringify(json), error => 
-        { 
-            if(error) console.log(error);
-        })
-    })
+    setTimeout(function () { // Le indico al programa que espere 5 segundos antes de seguir porque tarda en crearse el archivo .csv
 
+        // Parseo de CSV a JSON
+        csvtojson({delimiter: [";"],}).fromFile('./Revistas/DOAJ.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
+        { 
+            fs.writeFile('./Revistas/DOAJ.json', JSON.stringify(json), error => 
+            { 
+                if(error) console.log(error);
+            })
+        })
+        
+    }, 5000);
 
     //ESTO ES PARA DEBUGEAR, GUARDA EL JSON CRUDO EN UN TXT ASI LO PONEMOS DESPUES EN JSONVIEWER
     /*fs.writeFile('./Revistas/DOAJ.txt', this.response, error => 
     { 
         if(error) console.log(error);
     })*/
+    
 }
 
 

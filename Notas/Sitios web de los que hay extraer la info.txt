@@ -9,7 +9,7 @@ DOAJ Directory of Open Access Journals
 (375 revistas científicas argentinas)
 https://doaj.org/
 
-Redalyc https://www.redalyc.org/
+Redalyc https://www.redalyc.org/pais.oa?id=9
 
 NBRCA http://www.caicyt-conicet.gov.ar/sitio/comunicacion-cientifica/nucleo-basico/revistas-integrantes/
 
