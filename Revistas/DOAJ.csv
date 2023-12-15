@@ -1,4 +1,4 @@
-Título;ISSN impresa;ISSN en linea;Institución;Editora
+Título;ISSN impresa;ISSN en linea;Instituto;Editora
 Patristica et Mediaevalia;0325-2280;2683-9636;Universidad de Buenos Aires, Facultad de Filosofía y Letras, Sección de Estudios de Filosofía Medieval;Universidad de Buenos Aires
 Proyecciones;1850-6542;2618-5474;Universidad Nacional de La Plata;Universidad Nacional de La Plata
 Tópicos;1666-485X;1668-723X;Universidad Nacional del Litoral;Asociación Revista de Filosofía de Santa Fe
@@ -167,6 +167,7 @@ Revista de la Asociación Odontológica Argentina;0004-4881;2683-7226;Asociació
 Comechingonia;0326-7911;2250-7728;Consejo Nacional de Investigaciones Científicas y Técnicas, Centro Argentino de Información Científica y Tecnológica;Centro de Estudios Históricos
 Revista de la Facultad de Ciencias Médicas de Córdoba;0014-6722;1853-0605;Universidad Nacional de Córdoba, Facultad de Ciencias Médicas;Universidad Nacional de Córdoba
 Costos y Gestión;null;2545-8329;null;Instituto Argentino de Profesores Universitarios de Costos (IAPUCo)
+El Hilo de la Fábula;1667-7900;2362-5651;null;Ediciones UNL
 Revista Pilquen: Sección Ciencias Sociales;null;1851-3123;Universidad Nacional del Comahue, Centro Universitario Regional Zona Atlántica;Universidad Nacional del Comahue
 Archivos de Historia del Movimiento Obrero y la Izquierda;2313-9749;null;null;Centro de Estudios Históricos de los Trabajadores y las Izquierdas
 Páginas de Filosofía;0327-5108;1853-7960;Universidad Nacional del Comahue, Facultad de Humanidades, Departamento de Filosofía;Universidad Nacional del Comahue
@@ -269,11 +270,12 @@ Journal de Ciencias Sociales;null;2362-194X;Universidad de Palermo, Facultad de 
 Anuario de la Escuela de Historia Virtual;null;1853-7049;Escuela de Historia;Universidad Nacional de Córdoba
 Biología Acuática;null;1668-4869;Instituto de Limnología "Raúl A. Ringuelet. (CONICET-UNLP);Instituto de Limnología "Raúl A. Ringuelet. (CONICET-UNLP)
 Urbania;1853-7626;2591-5681;null;Arqueocoop LTDA
-Revista de la Asociación Argentina de Ortopedia y Traumatologia;1515-1786;1852-7434;Asociacion Argentina de Ortopedia y Traumatologia;Asociacion Argentina de Ortopedia y Traumatologia
+Revista de la Asociación Argentina de Ortopedia y Traumatología;1515-1786;1852-7434;null;Asociación Argentina de Ortopedia y Traumatología
 Synthesis (La Plata);0328-1205;1851-779X;Centro de Estudios Helénicos;Universidad Nacional de La Plata
 Revista de Nefrología, Diálisis y Trasplante;0326-3428;2346-8548;Asociación Regional de Diálisis y Trasplantes Renales de Capital Federal y Provincia de Buenos Aires;Asociación Regional de Diálisis y Trasplantes Renales de Capital Federal y Provincia de Buenos Aires
 Pasado Abierto;null;2451-6961;null;Universidad Nacional de Mar del Plata
 Análisis Filosófico;0326-1301;1851-9636;Sociedad Argentina de Análisis Filosófico (SADAF);Sociedad Argentina de Análisis Filosófico (SADAF)
+Latin American Journal of Sedimentology and Basin Analysis;1669-7316;1851-4979;null;Asociación Argentina de Sedimentología
 Revista Eurolatinoamericana de Derecho Administrativo;null;2362-583X;Red Docente Eurolatinoamericana de Derecho Administrativo;Universidad Nacional del Litoral
 Revista Argentina de Investigación Educativa;null;2796-7433;Universidad Pedagógica Nacional;Universidad Pedagógica Nacional
 RevIISE;null;2250-5555;null;IISE
@@ -296,7 +298,7 @@ Revista Industrial y Agrícola de Tucumán;0370-5404;1851-3018;Estación Experim
 Argumentos : Revista de Crítica Social;null;1666-8979;Universidad de Buenos Aires. Facultad de Ciencias Sociales. Instituto de Investigaciones Gino Germani;Instituto de Investigaciones Gino Germani, Facultad de Ciencias Sociales, Universidad de Buenos Aires
 Olivar: Revista de Literatura y Cultura Españolas;1515-1115;1852-4478;Universidad Nacional de La Plata, Facultad de Humanidades y Ciencias de la Educación, Secretaría de Investigación, Centro de Estudios de Teoría y Crítica Literaria;Universidad Nacional de La Plata
 Información, Cultura y Sociedad;1514-8327;1851-1740;Universidad de Buenos Aires, Facultad de Filosofía y Letras, Instituto de Investigaciones Bibliotecológicas;Universidad de Buenos Aires
-Revista de Enseñanza de la Física;0326-7091;2250-6101;Asociación de Profesores de Física de la Argentina;Asociación de Profesores de Física de Argentina
+Revista de Enseñanza de la Física;0326-7091;2250-6101;null;Asociación de Profesores de Física de Argentina
 Revista Abierta de Informática Aplicada;null;2591-5320;Universidad Abierta Interamericana, Fundación Iberoamericana de Estudios Superiores;Universidad Abierta Interamericana
 Actualidad Económica;0327-585X;2250-754X;Universidad Nacional de Córdoba, Facultad de Ciencias Económicas, Instituto de Economía y Finanzas;Universidad Nacional de Córdoba
 Paraguay desde las Ciencias Sociales;null;2314-1638;Universidad de Buenos Aires, Instituto de Estudios de América Latina y el Caribe;Universidad de Buenos Aires
@@ -310,7 +312,7 @@ Punto Sur;null;2683-7404;Instituto de Geografía Dr. Romualdo Ardissone;Facultad
 Meteorologica;0325-187X;1850-468X;null;Centro Argentino de Meteorólogos
 SaberEs;1852-4184;1852-4222;Universidad Nacional de Rosario, Facultad de Ciencias Económicas y Estadística;Universidad Nacional de Rosario
 Revista UCES D.G. "Enseñanza y Aprendizaje del Diseño;null;2344-9551;null;Universidad de Ciencias Empresariales y Sociales
-Praxis Educativa;0328-9702;2313-934X;Universidad Nacional de La Pampa, Facultad de Ciencias Humanas, Instituto de Ciencias de la Educación;Universidad Nacional de La Pampa
+Praxis Educativa;0328-9702;2313-934X;null;Universidad Nacional de La Pampa
 Cuadernos Medievales;null;2451-6821;Facultad de Humanidades;Universidad Nacional de Mar del Plata
 Revista Latinoamericana de Metodología de las Ciencias Sociales;null;1853-7863;Universidad Nacional de La Plata, Facultad de Humanidades y Ciencias de la Educación, Centro Interdisciplinario de Metodología de las Ciencias Sociales;Universidad Nacional de La Plata
 Revista de Ciencias Empresariales;2468-9785;2468-9807;Córdoba Management School, Universidad Blas Pascal;Universidad Blas Pascal

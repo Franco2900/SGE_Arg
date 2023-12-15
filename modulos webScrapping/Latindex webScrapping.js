@@ -1,8 +1,8 @@
-const fs = require('fs');        // Módulo para leer y escribir archivos
+const fs        = require('fs');        // Módulo para leer y escribir archivos
 const puppeteer = require('puppeteer'); // Módulo para web scrapping
-const jsdom = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
+const jsdom     = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
 const csvtojson = require('csvtojson')  // Módulo para pasar texto csv a json
-const path = require('path');      // Módulo para trabajar con los path/rutas (Es un modelo núcleo de Node.js)
+const path      = require('path');      // Módulo para trabajar con los path/rutas (Es un modelo núcleo de Node.js)
 
 // Busco cuantas páginas devuelve la consulta a Latindex (cada página tiene entre 1 y 20 revistas)
 async function buscarCantidadPaginas() {
@@ -82,23 +82,20 @@ async function extraerInfoRevista(enlace) {
   const browser = await puppeteer.launch({ headless: 'new' });
 
   try {
-    const page = await browser.newPage();
+    const page     = await browser.newPage();
     page.setDefaultNavigationTimeout(120000);
     const response = await page.goto(enlace);
-    const body = await response.text();
+    const body     = await response.text();
 
     const { window: { document } } = new jsdom.JSDOM(body);
 
     try {
-      var filtroHTML = document.getElementById("rev-linea");
-      var filtro2HTML = filtroHTML.getElementsByClassName("table-resultadosFicha")[0];
-      const tabla1 = filtro2HTML.querySelectorAll("tbody tr td");
-      const titulo = tabla1[0].textContent;
-      const issn = tabla1[tabla1.length - 1].textContent;
+      const tabla1      = document.getElementById("rev-linea").getElementsByClassName("table-resultadosFicha")[0].querySelectorAll("tbody tr td");
+      const titulo      = tabla1[0].textContent;
+      const issnEnLinea = tabla1[tabla1.length - 1].textContent;
 
-      filtroHTML = document.getElementById("datos-comunes");
-      const tabla2 = filtroHTML.querySelectorAll("div table tbody tr td");
-      const tabla3 = filtroHTML.querySelectorAll("div table tbody tr th");
+      const tabla2 = document.getElementById("datos-comunes").querySelectorAll("div table tbody tr td");
+      const tabla3 = document.getElementById("datos-comunes").querySelectorAll("div table tbody tr th");
 
       var moverPosicion = 0;
       var organismoResponsable = null;
@@ -108,18 +105,18 @@ async function extraerInfoRevista(enlace) {
         organismoResponsable = tabla2[3].textContent.trim().replaceAll(";", ",");
       }
 
-      const idioma = tabla2[0].textContent.trim().replaceAll(";", ",");
-      const tema = tabla2[1].textContent.trim().replaceAll(";", ",");
-      const subtemas = tabla2[2].textContent.trim().replaceAll(";", ",");
+      const idioma    = tabla2[0].textContent.trim().replaceAll(";", ",");
+      const tema      = tabla2[1].textContent.trim().replaceAll(";", ",");
+      const subtemas  = tabla2[2].textContent.trim().replaceAll(";", ",");
       const editorial = tabla2[3 + moverPosicion].textContent.trim().replaceAll(";", ",");
-      const ciudad = tabla2[4 + moverPosicion].textContent.trim().replaceAll(";", ",");
+      const ciudad    = tabla2[4 + moverPosicion].textContent.trim().replaceAll(";", ",");
       const provincia = tabla2[5 + moverPosicion].textContent.trim().replaceAll(";", ","); // En Latindex se llama Estado/Provincia/Departamento pero para hacerlo corto lo llamo directamente provincia
-      const correo = tabla2[6 + moverPosicion].textContent.trim().replaceAll(";", ",");
+      const correo    = tabla2[6 + moverPosicion].textContent.trim().replaceAll(";", ",");
 
       // Muestro en consola los resultados
       console.log(`***********************************************************************************`);
       console.log(`Título: ${titulo}`);
-      console.log(`ISSN: ${issn}`);
+      console.log(`ISSN en linea: ${issnEnLinea}`);
       console.log(`Idioma: ${idioma}`);
       console.log(`Tema: ${tema}`);
       console.log(`Subtemas: ${subtemas}`);
@@ -130,7 +127,7 @@ async function extraerInfoRevista(enlace) {
       console.log(`Correo: ${correo}`);
       console.log(`***********************************************************************************`);
 
-      respuesta = `${titulo};${issn};${idioma};${tema};${subtemas};${organismoResponsable};${editorial};${ciudad};${provincia};${correo}` + `\n`;
+      respuesta = `${titulo};${issnEnLinea};${idioma};${tema};${subtemas};${organismoResponsable};${editorial};${ciudad};${provincia};${correo}` + `\n`;
     }
     catch (error) {
       respuesta = "HUBO UN ERROR AL EXTRAER LOS DATOS" + "\n";
@@ -161,7 +158,7 @@ async function extraerInfoLatindex() {
   console.log("Comienza la extracción de datos de Latindex");
 
   const enlaces = await buscarEnlacesARevistas();
-  var info = "Título;ISSN;Idioma;Tema;Subtemas;Organismo responsable;Editorial;Ciudad;Estado/Provincia/Departamento;Correo" + "\n";
+  var info = "Título;ISSN en linea;Idioma;Tema;Subtemas;Organismo responsable;Editorial;Ciudad;Estado/Provincia/Departamento;Correo" + "\n";
 
   console.log("CANTIDAD DE REVISTAS: " + enlaces.length);
 

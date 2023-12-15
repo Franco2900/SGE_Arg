@@ -49,10 +49,11 @@ catch (error) {
 // Clase para pasar el texto de los archivos JSON a objetos y así poder hacer el ordenamiento
 class Revista {
     
-    constructor(titulo, issnImpreso, issnEnLinea) {
+    constructor(titulo, issnImpreso, issnEnLinea, instituto) {
         this.titulo = titulo;
         this.issnImpreso = issnImpreso;
         this.issnEnLinea = issnEnLinea;
+        this.instituto   = instituto;
         this.CAICYT      = false;
         this.DOAJ        = false;
         this.Latindex    = false;
@@ -60,7 +61,7 @@ class Revista {
     }
 
     toString() {
-        console.log(`Título: ${this.titulo}, ISSN impreso: ${this.issnImpreso}, ISSN en linea: ${this.issnEnLinea}`);
+        console.log(`Título: ${this.titulo}, ISSN impreso: ${this.issnImpreso}, ISSN en linea: ${this.issnEnLinea}, Instituto: ${this.instituto}`);
     }
 }
 
@@ -77,20 +78,25 @@ function crearListado() {
         var archivoJSON = sitiosWeb[i];
         for (var j = 0; j < sitiosWeb[i].length; j++) // for para recorrer las revistas de cada sitio web
         {
-            if (archivoJSON[j].Título == "HUBO UN ERROR") {
+            if (archivoJSON[j].Título == "HUBO UN ERROR") 
+            {
                 cantidadErrores++;
             }
-            else {
-                revistas.push(new Revista(archivoJSON[j].Título, archivoJSON[j]['ISSN impresa'], archivoJSON[j]['ISSN en linea'])); // Paso el texto a objetos para poder hacer el ordenamiento por alfabeto
+            else 
+            {
+                revistas.push(new Revista(archivoJSON[j].Título, archivoJSON[j]['ISSN impresa'], archivoJSON[j]['ISSN en linea'], archivoJSON[j]['Instituto'])); // Paso el texto a objetos para poder hacer el ordenamiento por alfabeto
             }
         }
     }
 
 
     // Ordeno alfabeticamente las revistas según el título. NOTA: Es ordenamiento por burbujeo, es el ordenamiento más simple de todos pero también el más lento. Cambiarlo por uno más rápido después
-    for (var i = 1; i < revistas.length; i++) {
-        for (var j = 0; j < revistas.length - 1; j++) {
-            if (revistas[j].titulo.toLowerCase() > revistas[j + 1].titulo.toLowerCase()) {
+    for (var i = 1; i < revistas.length; i++) 
+    {
+        for (var j = 0; j < revistas.length - 1; j++) 
+        {
+            if (revistas[j].titulo.toLowerCase() > revistas[j + 1].titulo.toLowerCase()) 
+            {
                 auxRevista = new Revista();
                 auxRevista = revistas[j];
                 revistas[j] = revistas[j + 1];
@@ -173,9 +179,9 @@ function crearListado() {
 
 
     // Armo el listado
-    var listado = "Título;ISSN impresa;ISSN en linea;CAICYT;DOAJ;Latindex;Redalyc" + "\n";
+    var listado = "Título;ISSN impresa;ISSN en linea;Instituto;CAICYT;DOAJ;Latindex;Redalyc" + "\n";
     for (var i = 0; i < revistas.length; i++) {
-        listado += `${revistas[i].titulo};${revistas[i].issnImpreso};${revistas[i].issnEnLinea};${revistas[i].CAICYT};${revistas[i].DOAJ};${revistas[i].Latindex};${revistas[i].Redalyc}` + `\n`;
+        listado += `${revistas[i].titulo};${revistas[i].issnImpreso};${revistas[i].issnEnLinea};${revistas[i].instituto};${revistas[i].CAICYT};${revistas[i].DOAJ};${revistas[i].Latindex};${revistas[i].Redalyc}` + `\n`;
     }
 
 

@@ -2,7 +2,7 @@ const fs             = require('fs');        // Módulo para leer y escribir arc
 const XMLHttpRequest = require('xhr2');      // Módulo para comunicarse con las APIs
 const csvtojson      = require('csvtojson')  // Módulo para pasar texto csv a json
 
-function extraerInfoDOAJ(paginaActual = 1, revista = 1, info = "Título;ISSN impresa;ISSN en linea;Institución;Editora\n")
+function extraerInfoDOAJ(paginaActual = 1, revista = 1, info = "Título;ISSN impresa;ISSN en linea;Instituto;Editora\n")
 {    
     const API_URL = "https://doaj.org/api/"; // URL a la que vamos a pedir los datos
 
@@ -82,7 +82,7 @@ function filtro(info, limite, revista, respuestaJSON)
         console.log(`Titulo: ${titulo}`);
         console.log(`ISSN impresa: ${pissn}`);
         console.log(`ISSN en linea: ${eissn}`);
-        console.log(`Institucion: ${nombreInstituto}`);
+        console.log(`Instituto: ${nombreInstituto}`);
         console.log(`Editora: ${editora}`);
         console.log(`***********************************************************************************`);
 
