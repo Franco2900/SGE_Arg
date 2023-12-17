@@ -203,10 +203,10 @@ async function extraerInfoLatindexLite() {
     await page.goto(`https://www.latindex.org/latindex/bAvanzada/resultado?idMod=1&tema=0&subtema=0&region=0&pais=3&critCat=0&send=Buscar&page=1`); // URL del sitio web al que se accede
 
     await page._client().send('Page.setDownloadBehavior',
-      {
-        behavior: 'allow',                        // Permito la descarga de archivos
-        downloadPath: path.resolve('./Revistas'), // Indico donde quiero descargar el archivo. La función resolve() transforma path relativos en path absolutos
-      });
+    {
+      behavior: 'allow',                        // Permito la descarga de archivos
+      downloadPath: path.resolve('./Revistas'), // Indico donde quiero descargar el archivo. La función resolve() transforma path relativos en path absolutos
+    });
 
     await page.click('a.export-links[data-href*="https://www.latindex.org/latindex/exportar/busquedaAvanzada/json"]'); // Indico donde hacer click
 
@@ -220,9 +220,10 @@ async function extraerInfoLatindexLite() {
       try {
         const archivoDescargado = require(path.resolve('./Revistas/Busqueda_avanzada.json'));
 
-        var info = "Título;ISSN en linea;ISSN impresa;ISSN-L;Instituto;Subtemas" + "\n";
+
+        var info = "Título;ISSN en linea;ISSN impresa;ISSN-L;Instituto" + "\n";
         for (var i = 0; i < archivoDescargado.length; i++) {
-          info += `${archivoDescargado[i].tit_propio};${archivoDescargado[i].issn_e};${archivoDescargado[i].issn_imp};${archivoDescargado[i].issn_l};${archivoDescargado[i].nombre_edi}` + `\n`;
+          info += `${archivoDescargado[i].tit_propio};${archivoDescargado[i].issn_e};${archivoDescargado[i].issn_imp};${archivoDescargado[i].issn_l};${archivoDescargado[i].nombre_edi.replaceAll(";", ",")}` + `\n`;
         }
 
         // Escribo la info en formato csv. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
@@ -268,8 +269,10 @@ async function extraerInfoLatindexLite() {
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
   }
 
-  await browser.close();
-}
+  setTimeout(function () { // Al ser una función asincrona, el resto del código después del setTimeout de arriba se sigue ejecutando y lo que esta dentro de dicho setTimeout se ejecuta después de pasado el tiempo indicado
+    browser.close();       // Es por eso que hay que hacer también un setTimeout con el browser.close() para que el archivo se pueda descargar
+  }, 10000);
 
+}
 
 exports.extraerInfoLatindexLite = extraerInfoLatindexLite;
